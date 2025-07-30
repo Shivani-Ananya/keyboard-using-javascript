@@ -1,82 +1,42 @@
-var numberOfDrumButtons = document.querySelectorAll(".Note").length;
+const buttons = document.querySelectorAll(".Note");
 
-for (var i = 0; i < numberOfDrumButtons; i++) {
-  document.querySelectorAll(".Note")[i].addEventListener("click", function () {
-    var buttonInnerHTML = this.innerHTML;
-    makeSound(buttonInnerHTML);
-    buttonAnimation(buttonInnerHTML);
+buttons.forEach(btn => {
+  btn.addEventListener("click", function () {
+    const note = this.getAttribute("data-note");
+    if (note) {
+      playSound(note);
+      animateButton(this);
+    }
   });
-}
+});
 
-document.addEventListener("keypress", function (event) {
-  switch (event.key.toLowerCase()) {
-    case "a":
-      makeSound("DO");
-      buttonAnimation("DO");
-      break;
-    case "s":
-      makeSound("RE");
-      buttonAnimation("RE");
-      break;
-    case "d":
-      makeSound("MI");
-      buttonAnimation("MI");
-      break;
-    case "f":
-      makeSound("FA");
-      buttonAnimation("FA");
-      break;
-    case "j":
-      makeSound("SOL");
-      buttonAnimation("SOL");
-      break;
-    case "k":
-      makeSound("LA");
-      buttonAnimation("LA");
-      break;
-    case "l":
-      makeSound("TI");
-      buttonAnimation("TI");
-      break;
-    default:
-      console.log("Unmapped key: " + event.key);
+document.addEventListener("keypress", function (e) {
+  const keyMap = {
+    a: "DO",
+    s: "RE",
+    d: "MI",
+    f: "FA",
+    j: "SOL",
+    k: "LA",
+    l: "TI"
+  };
+
+  const note = keyMap[e.key.toLowerCase()];
+  if (note) {
+    playSound(note);
+    const btn = document.querySelector(`[data-note="${note}"]`);
+    if (btn) animateButton(btn);
   }
 });
 
-function makeSound(key) {
-  switch (key) {
-    case "DO":
-      new Audio("sounds/do.mp3").play();
-      break;
-    case "RE":
-      new Audio("sounds/re.mp3").play();
-      break;
-    case "MI":
-      new Audio("sounds/mi.mp3").play();
-      break;
-    case "FA":
-      new Audio("sounds/fa.mp3").play();
-      break;
-    case "SOL":
-      new Audio("sounds/sol.mp3").play();
-      break;
-    case "LA":
-      new Audio("sounds/la.mp3").play();
-      break;
-    case "TI":
-      new Audio("sounds/ti.mp3").play();
-      break;
-    default:
-      console.log("Invalid sound key: " + key);
-  }
+function playSound(note) {
+  const audio = new Audio(`sounds/${note.toLowerCase()}.mp3`);
+  audio.play();
 }
 
-function buttonAnimation(currentKey) {
-  var activeButton = document.querySelector("." + currentKey);
-  if (activeButton) {
-    activeButton.classList.add("pressed");
-    setTimeout(function () {
-      activeButton.classList.remove("pressed");
-    }, 100);
-  }
+function animateButton(button) {
+  button.classList.add("pressed");
+  setTimeout(() => {
+    button.classList.remove("pressed");
+  }, 100);
 }
